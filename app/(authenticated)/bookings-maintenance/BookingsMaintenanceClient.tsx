@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface Asset {
   id: string;
@@ -27,6 +28,10 @@ interface MaintenanceRequest {
 }
 
 export default function BookingsMaintenanceClient() {
+  const { data: session } = useSession();
+  const user = session?.user as any;
+  const userRole = user?.role || "EMPLOYEE";
+
   const searchParams = useSearchParams();
   const initialAction = searchParams.get("action");
 
@@ -126,6 +131,30 @@ export default function BookingsMaintenanceClient() {
 
       showSuccess("Maintenance request raised successfully!");
       setMaintenanceAssetId("");
+      fetchData();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResolveMaintenance = async (requestId: string) => {
+    if (!confirm("Are you sure this asset has completed maintenance and should be marked available?")) {
+      return;
+    }
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch(`/api/maintenance?id=${requestId}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to resolve maintenance request");
+
+      showSuccess("Asset marked as Available successfully!");
       fetchData();
     } catch (err: any) {
       setError(err.message);
@@ -311,12 +340,13 @@ export default function BookingsMaintenanceClient() {
                   <th className="p-4">Asset Details</th>
                   <th className="p-4">Category</th>
                   <th className="p-4">Date Filed</th>
+                  {["ADMIN", "ASSET_MANAGER"].includes(userRole) && <th className="p-4 text-right">Actions</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800 text-sm">
                 {maintenance.length === 0 ? (
                   <tr>
-                    <td colSpan={3} className="p-6 text-center text-slate-500 italic">
+                    <td colSpan={["ADMIN", "ASSET_MANAGER"].includes(userRole) ? 4 : 3} className="p-6 text-center text-slate-500 italic">
                       No assets are currently reported for maintenance.
                     </td>
                   </tr>
@@ -331,6 +361,16 @@ export default function BookingsMaintenanceClient() {
                       <td className="p-4 text-slate-400 font-mono text-xs">
                         {new Date(m.createdAt).toLocaleString()}
                       </td>
+                      {["ADMIN", "ASSET_MANAGER"].includes(userRole) && (
+                        <td className="p-4 text-right">
+                          <button
+                            onClick={() => handleResolveMaintenance(m.id)}
+                            className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold border border-emerald-800 bg-emerald-950/20 px-2.5 py-1 rounded"
+                          >
+                            Mark Available
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   ))
                 )}
