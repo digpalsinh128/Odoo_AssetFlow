@@ -22,7 +22,7 @@ export default function BookingsPage() {
     fetch('/api/assets')
       .then(res => res.json())
       .then(data => {
-        const bookable = data.filter((a: any) => a.isBookable);
+        const bookable = data.assets.filter((a: any) => a.isBookable);
         setAssets(bookable);
       })
       .catch(console.error);

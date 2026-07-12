@@ -22,7 +22,7 @@ export default function RaiseMaintenancePage() {
   useEffect(() => {
     fetch('/api/assets')
       .then(res => res.json())
-      .then(data => setAssets(data))
+      .then(data => setAssets(data.assets || []))
       .catch(console.error);
 
     fetch('/api/users')
