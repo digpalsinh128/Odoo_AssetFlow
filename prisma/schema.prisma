@@ -1,0 +1,148 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String            @id @default(uuid())
+  name             String
+  email            String            @unique
+  passwordHash     String
+  role             String            @default("EMPLOYEE") // EMPLOYEE, ADMIN, DEPARTMENT_HEAD, ASSET_MANAGER
+  status           String            @default("ACTIVE")   // ACTIVE, INACTIVE
+  departmentId     String?
+  department       Department?       @relation("EmployeeDepartment", fields: [departmentId], references: [id])
+  managedDept      Department?       @relation("DepartmentHead")
+  allocations      Allocation[]
+  notifications    Notification[]
+  activityLogs     ActivityLog[]
+  transferRequestsRequested TransferRequest[] @relation("Requester")
+  transferRequestsApproved  TransferRequest[] @relation("Approver")
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model Department {
+  id               String            @id @default(uuid())
+  name             String
+  status           String            @default("ACTIVE")   // ACTIVE, INACTIVE
+  parentId         String?
+  parent           Department?       @relation("DepartmentHierarchy", fields: [parentId], references: [id])
+  subDepartments   Department[]      @relation("DepartmentHierarchy")
+  managerId        String?           @unique
+  manager          User?             @relation("DepartmentHead", fields: [managerId], references: [id])
+  employees        User[]            @relation("EmployeeDepartment")
+  allocations      Allocation[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model AssetCategory {
+  id               String            @id @default(uuid())
+  name             String            @unique
+  fields           String?           // JSON string representing custom field specifications
+  assets           Asset[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model Asset {
+  id               String            @id @default(uuid())
+  name             String
+  serialNumber     String            @unique
+  model            String
+  status           String            @default("AVAILABLE") // AVAILABLE, ALLOCATED, UNDER_MAINTENANCE, DISPOSED
+  categoryId       String
+  category         AssetCategory     @relation(fields: [categoryId], references: [id])
+  customFields     String?           // JSON string of custom key-value pairs
+  allocations      Allocation[]
+  bookings         Booking[]
+  maintenance      MaintenanceRequest[]
+  auditItems       AuditItem[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model Allocation {
+  id                 String            @id @default(uuid())
+  assetId            String
+  asset              Asset             @relation(fields: [assetId], references: [id])
+  userId             String?
+  user               User?             @relation(fields: [userId], references: [id])
+  departmentId       String?
+  department         Department?       @relation(fields: [departmentId], references: [id])
+  status             String            @default("ACTIVE") // ACTIVE, RETURNED
+  expectedReturnDate DateTime?
+  returnDate         DateTime?
+  checkInNote        String?
+  checkOutNote       String?
+  transferRequests   TransferRequest[]
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+}
+
+model TransferRequest {
+  id                 String            @id @default(uuid())
+  allocationId       String
+  allocation         Allocation        @relation(fields: [allocationId], references: [id])
+  targetUserId       String?
+  targetDepartmentId String?
+  status             String            @default("PENDING") // PENDING, APPROVED, REJECTED
+  requestedById      String
+  requestedBy        User              @relation("Requester", fields: [requestedById], references: [id])
+  approvedById       String?
+  approvedBy         User?             @relation("Approver", fields: [approvedById], references: [id])
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+}
+
+model Booking {
+  id               String            @id @default(uuid())
+  assetId          String
+  asset            Asset             @relation(fields: [assetId], references: [id])
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model MaintenanceRequest {
+  id               String            @id @default(uuid())
+  assetId          String
+  asset            Asset             @relation(fields: [assetId], references: [id])
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model AuditCycle {
+  id               String            @id @default(uuid())
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model AuditItem {
+  id               String            @id @default(uuid())
+  assetId          String
+  asset            Asset             @relation(fields: [assetId], references: [id])
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model Notification {
+  id               String            @id @default(uuid())
+  userId           String
+  user             User              @relation(fields: [userId], references: [id])
+  message          String
+  read             Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+}
+
+model ActivityLog {
+  id               String            @id @default(uuid())
+  action           String
+  details          String
+  userId           String?
+  user             User?             @relation(fields: [userId], references: [id])
+  createdAt        DateTime          @default(now())
+}
