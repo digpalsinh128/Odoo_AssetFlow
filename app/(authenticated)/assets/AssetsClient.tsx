@@ -88,6 +88,7 @@ export default function AssetsClient() {
   // UI Dialog/Form Toggles
   const [showAddForm, setShowAddForm] = useState(false);
   const [showAllocateDialog, setShowAllocateDialog] = useState<string | null>(null); // assetId
+  const [showConflictDialog, setShowConflictDialog] = useState<Asset | null>(null); // conflictAsset
   const [showReturnDialog, setShowReturnDialog] = useState<string | null>(null); // assetId
   const [showTransferDialog, setShowTransferDialog] = useState<Allocation | null>(null);
 
@@ -611,9 +612,15 @@ export default function AssetsClient() {
                       </span>
                     </td>
                     <td className="p-4 text-right space-x-2">
-                      {asset.status === "AVAILABLE" && isWriteAuthorized && (
+                      {isWriteAuthorized && (
                         <button
-                          onClick={() => setShowAllocateDialog(asset.id)}
+                          onClick={() => {
+                            if (asset.status === "AVAILABLE") {
+                              setShowAllocateDialog(asset.id);
+                            } else {
+                              setShowConflictDialog(asset);
+                            }
+                          }}
                           className="text-xs text-purple-400 hover:text-purple-300 font-semibold"
                         >
                           Allocate
@@ -800,6 +807,82 @@ export default function AssetsClient() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Conflict / Allocation Blocked Dialog Overlay */}
+      {showConflictDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-slate-900 border border-slate-800 w-full max-w-md p-6 rounded-xl space-y-4 shadow-2xl">
+            <div className="flex items-center gap-3 border-b border-slate-800 pb-3">
+              <span className="text-2xl">⚠️</span>
+              <h2 className="text-lg font-bold text-red-400">Allocation Blocked</h2>
+            </div>
+            
+            <p className="text-slate-300 text-sm">
+              The asset <span className="text-slate-100 font-semibold">{showConflictDialog.name}</span> cannot be allocated directly because it is not available.
+            </p>
+
+            <div className="bg-slate-950 p-4 rounded-lg border border-slate-800 text-sm text-slate-400">
+              {showConflictDialog.status === "ALLOCATED" ? (
+                <>
+                  <div className="font-semibold text-slate-300">Current Status: Allocated</div>
+                  <div className="mt-1">
+                    Currently held by:{" "}
+                    <span className="text-purple-400 font-medium">
+                      {(() => {
+                        const activeAlloc = showConflictDialog.allocations?.[0];
+                        if (!activeAlloc) return "Unknown";
+                        return activeAlloc.user 
+                          ? activeAlloc.user.name 
+                          : activeAlloc.department 
+                          ? `Dept: ${activeAlloc.department.name}` 
+                          : "Unknown";
+                      })()}
+                    </span>
+                  </div>
+                </>
+              ) : showConflictDialog.status === "UNDER_MAINTENANCE" ? (
+                <div className="font-semibold text-amber-500">Current Status: Under Maintenance</div>
+              ) : (
+                <div className="font-semibold text-slate-500">Current Status: {showConflictDialog.status.replace("_", " ")}</div>
+              )}
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              {showConflictDialog.status === "ALLOCATED" && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const activeAlloc = showConflictDialog.allocations?.[0];
+                    if (activeAlloc) {
+                      setShowTransferDialog({
+                        ...activeAlloc,
+                        asset: {
+                          id: showConflictDialog.id,
+                          name: showConflictDialog.name,
+                          serialNumber: showConflictDialog.serialNumber
+                        }
+                      });
+                    }
+                    setShowConflictDialog(null);
+                  }}
+                  className="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2 rounded-lg text-sm transition-colors"
+                >
+                  🔄 Request Transfer instead
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => setShowConflictDialog(null)}
+                className={`px-4 py-2 border border-slate-800 text-slate-400 hover:bg-slate-800 rounded-lg text-sm ${
+                  showConflictDialog.status !== "ALLOCATED" ? "w-full" : ""
+                }`}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -15,6 +15,7 @@ export default function Sidebar() {
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: "📊" },
     { name: "Assets & Allocations", href: "/assets", icon: "📦" },
+    { name: "Bookings & Maintenance", href: "/bookings-maintenance", icon: "📅" },
   ];
 
   // Admin only tab

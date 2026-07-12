@@ -5,9 +5,12 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 interface KPIInfo {
-  totalAssets: number;
+  availableAssets: number;
   allocatedAssets: number;
   maintenanceAssets: number;
+  activeBookings: number;
+  pendingTransfers: number;
+  upcomingReturns: number;
   overdueAssets: number;
 }
 
@@ -36,9 +39,12 @@ export default function DashboardClient() {
   const [error, setError] = useState("");
 
   const [kpis, setKpis] = useState<KPIInfo>({
-    totalAssets: 0,
+    availableAssets: 0,
     allocatedAssets: 0,
     maintenanceAssets: 0,
+    activeBookings: 0,
+    pendingTransfers: 0,
+    upcomingReturns: 0,
     overdueAssets: 0,
   });
   const [overdues, setOverdues] = useState<OverdueAllocation[]>([]);
@@ -116,36 +122,41 @@ export default function DashboardClient() {
       ) : (
         <>
           {/* KPI Statistics */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-slate-900/50 border border-slate-800/80 p-6 rounded-xl hover:border-slate-700 transition-all duration-300">
-              <div className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Total Assets</div>
-              <div className="text-3xl font-bold mt-2 text-slate-100">{kpis.totalAssets}</div>
-              <div className="text-[10px] text-slate-500 mt-1">
-                {userRole === "ADMIN" ? "Corporate inventory count" : "Assets allocated to you"}
-              </div>
+              <div className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Assets Available</div>
+              <div className="text-3xl font-bold mt-2 text-emerald-400">{kpis.availableAssets}</div>
+              <div className="text-[10px] text-slate-500 mt-1">Ready for check-out</div>
             </div>
 
             <div className="bg-slate-900/50 border border-slate-800/80 p-6 rounded-xl hover:border-slate-700 transition-all duration-300">
-              <div className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Active Allocations</div>
+              <div className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Assets Allocated</div>
               <div className="text-3xl font-bold mt-2 text-purple-400">{kpis.allocatedAssets}</div>
-              <div className="text-[10px] text-slate-500 mt-1">Currently checked out</div>
+              <div className="text-[10px] text-slate-500 mt-1">Currently in use</div>
             </div>
 
             <div className="bg-slate-900/50 border border-slate-800/80 p-6 rounded-xl hover:border-slate-700 transition-all duration-300">
-              <div className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Under Maintenance</div>
+              <div className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Maintenance Today</div>
               <div className="text-3xl font-bold mt-2 text-amber-500">{kpis.maintenanceAssets}</div>
-              <div className="text-[10px] text-slate-500 mt-1">In diagnostics or repair</div>
+              <div className="text-[10px] text-slate-500 mt-1">Undergoing service/diagnostic</div>
             </div>
 
-            <div className={`p-6 rounded-xl border transition-all duration-300 ${kpis.overdueAssets > 0
-                ? "bg-red-950/20 border-red-800/50 hover:border-red-800"
-                : "bg-slate-900/50 border-slate-800/80 hover:border-slate-700"
-              }`}>
-              <div className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Overdue Returns</div>
-              <div className={`text-3xl font-bold mt-2 ${kpis.overdueAssets > 0 ? "text-red-400" : "text-slate-100"}`}>
-                {kpis.overdueAssets}
-              </div>
-              <div className="text-[10px] text-slate-500 mt-1">Exceeded expected return date</div>
+            <div className="bg-slate-900/50 border border-slate-800/80 p-6 rounded-xl hover:border-slate-700 transition-all duration-300">
+              <div className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Active Bookings</div>
+              <div className="text-3xl font-bold mt-2 text-sky-400">{kpis.activeBookings}</div>
+              <div className="text-[10px] text-slate-500 mt-1">Asset reservations</div>
+            </div>
+
+            <div className="bg-slate-900/50 border border-slate-800/80 p-6 rounded-xl hover:border-slate-700 transition-all duration-300">
+              <div className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Pending Transfers</div>
+              <div className="text-3xl font-bold mt-2 text-pink-400">{kpis.pendingTransfers}</div>
+              <div className="text-[10px] text-slate-500 mt-1">Requests requiring approval</div>
+            </div>
+
+            <div className="bg-slate-900/50 border border-slate-800/80 p-6 rounded-xl hover:border-slate-700 transition-all duration-300">
+              <div className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Upcoming Returns</div>
+              <div className="text-3xl font-bold mt-2 text-indigo-400">{kpis.upcomingReturns}</div>
+              <div className="text-[10px] text-slate-500 mt-1">Returns due within 7 days</div>
             </div>
           </div>
 
@@ -195,32 +206,32 @@ export default function DashboardClient() {
             </div>
           )}
 
-          {/* Quick Actions (Admin only) */}
-          {userRole === "ADMIN" && (
-            <div className="bg-slate-900/40 border border-slate-800 p-6 rounded-xl">
-              <h2 className="text-lg font-bold text-slate-200 mb-4">⚙️ Administration Actions</h2>
-              <div className="flex flex-wrap gap-4">
+          {/* Quick Actions */}
+          <div className="bg-slate-900/40 border border-slate-800 p-6 rounded-xl">
+            <h2 className="text-lg font-bold text-slate-200 mb-4">⚡ Quick Actions</h2>
+            <div className="flex flex-wrap gap-4">
+              {["ADMIN", "ASSET_MANAGER"].includes(userRole) && (
                 <Link
                   href="/assets"
-                  className="bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 px-4 py-2 rounded-lg text-sm transition-all duration-200"
+                  className="bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 px-4 py-2.5 rounded-lg text-sm transition-all duration-200 font-semibold"
                 >
-                  📦 Manage Catalog & Issue Allocations
+                  ➕ Register Asset
                 </Link>
-                <Link
-                  href="/org-setup"
-                  className="bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-4 py-2 rounded-lg text-sm transition-all duration-200"
-                >
-                  🏢 Manage Departments & Categories
-                </Link>
-                <Link
-                  href="/org-setup"
-                  className="bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700 px-4 py-2 rounded-lg text-sm transition-all duration-200"
-                >
-                  👥 Promote Roles & Directory
-                </Link>
-              </div>
+              )}
+              <Link
+                href="/bookings-maintenance?action=book"
+                className="bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-4 py-2.5 rounded-lg text-sm transition-all duration-200 font-semibold"
+              >
+                📅 Book Resource
+              </Link>
+              <Link
+                href="/bookings-maintenance?action=maintenance"
+                className="bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/30 px-4 py-2.5 rounded-lg text-sm transition-all duration-200 font-semibold"
+              >
+                🔧 Raise Maintenance Request
+              </Link>
             </div>
-          )}
+          </div>
 
           {/* Recent Activity Log Feed */}
           <div className="bg-slate-900/40 border border-slate-800 rounded-xl overflow-hidden">

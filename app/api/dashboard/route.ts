@@ -18,13 +18,28 @@ export async function GET() {
     const now = new Date();
 
     if (role === "ADMIN" || role === "ASSET_MANAGER") {
-      // Admin sees global workspace stats
-      const totalAssets = await prisma.asset.count();
+      // Admin/Asset Manager see global workspace stats
+      const availableAssets = await prisma.asset.count({
+        where: { status: "AVAILABLE" },
+      });
       const allocatedAssets = await prisma.asset.count({
         where: { status: "ALLOCATED" },
       });
       const maintenanceAssets = await prisma.asset.count({
         where: { status: "UNDER_MAINTENANCE" },
+      });
+      const activeBookings = await prisma.booking.count();
+      const pendingTransfers = await prisma.transferRequest.count({
+        where: { status: "PENDING" },
+      });
+      const upcomingReturns = await prisma.allocation.count({
+        where: {
+          status: "ACTIVE",
+          expectedReturnDate: {
+            gte: now,
+            lte: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
+          },
+        },
       });
       const overdueAllocationsCount = await prisma.allocation.count({
         where: {
@@ -55,9 +70,12 @@ export async function GET() {
 
       return NextResponse.json({
         kpis: {
-          totalAssets,
+          availableAssets,
           allocatedAssets,
           maintenanceAssets,
+          activeBookings,
+          pendingTransfers,
+          upcomingReturns,
           overdueAssets: overdueAllocationsCount,
         },
         overdueList,
@@ -75,9 +93,35 @@ export async function GET() {
         },
       });
 
-      const totalAssets = userAllocations.length;
+      const userAssetIds = userAllocations.map((a) => a.assetId);
+
+      const availableAssets = await prisma.asset.count({
+        where: { status: "AVAILABLE" },
+      });
       const allocatedAssets = userAllocations.filter((a) => a.asset.status === "ALLOCATED").length;
       const maintenanceAssets = userAllocations.filter((a) => a.asset.status === "UNDER_MAINTENANCE").length;
+
+      const activeBookings = await prisma.booking.count({
+        where: { assetId: { in: userAssetIds } },
+      });
+
+      const pendingTransfers = await prisma.transferRequest.count({
+        where: {
+          requestedById: userId,
+          status: "PENDING",
+        },
+      });
+
+      const upcomingReturns = await prisma.allocation.count({
+        where: {
+          userId,
+          status: "ACTIVE",
+          expectedReturnDate: {
+            gte: now,
+            lte: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
+          },
+        },
+      });
 
       const overdueAllocations = await prisma.allocation.findMany({
         where: {
@@ -104,9 +148,12 @@ export async function GET() {
 
       return NextResponse.json({
         kpis: {
-          totalAssets,
+          availableAssets,
           allocatedAssets,
           maintenanceAssets,
+          activeBookings,
+          pendingTransfers,
+          upcomingReturns,
           overdueAssets: overdueAllocations.length,
         },
         overdueList: overdueAllocations,
