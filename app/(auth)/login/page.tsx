@@ -12,6 +12,7 @@ function LoginContent() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(
     errorQuery === "CredentialsSignin" ? "Invalid email or password" : ""
@@ -74,7 +75,7 @@ function LoginContent() {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-200"
-              placeholder="name@company.com"
+              placeholder="Enter the email"
             />
           </div>
 
@@ -90,14 +91,23 @@ function LoginContent() {
                 Forgot password?
               </Link>
             </div>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-200"
-              placeholder="••••••••"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-4 pr-12 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-200"
+                placeholder="Enter the password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-200 transition-colors text-sm font-semibold select-none"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
 
           <button
@@ -108,6 +118,7 @@ function LoginContent() {
             {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
+
 
         <div className="mt-8 text-center border-t border-slate-800 pt-6">
           <p className="text-xs text-slate-400">
