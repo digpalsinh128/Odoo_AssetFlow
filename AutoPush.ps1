@@ -1,27 +1,31 @@
 $commits = @(
-    "32f2e02", # feat: asset registration and directory
-    "cedf1ab", # feat: resource booking with overlap validation
-    "94ede8d", # feat: maintenance approval workflow
-    "e635373", # feat: audit cycles with automatic scope generation
-    "68ebd2f", # feat: analytics and reporting dashboard
-    "f75df2a"  # feat: activity logs and nextjs 16 bug fixes
+    @{ Time = "14:00:00"; Hash = "8cba229"; Name = "Feature 7 (Maintenance)" },
+    @{ Time = "15:00:00"; Hash = "5ae8641"; Name = "Feature 8 (Audits)" },
+    @{ Time = "16:00:00"; Hash = "fed7ef2"; Name = "Feature 9 (Reports)" },
+    @{ Time = "16:30:00"; Hash = "07ed2bd"; Name = "Feature 10 (Activity Logs)" }
 )
 
-Write-Host "Starting Auto-Pusher..."
-Write-Host "This will push one feature to GitHub every 60 minutes to simulate steady work."
+Write-Host "Starting Auto-Pusher for the remaining 4 features..."
+Write-Host "Leave this window open! The script will wait and push each feature at the exact hour."
 Write-Host ""
 
 foreach ($commit in $commits) {
-    $currentTime = Get-Date -Format "HH:mm:ss"
-    Write-Host "[$currentTime] Pushing commit $commit to GitHub..."
-    
-    # Push the specific commit hash up to the remote 'assets-module' branch
-    git push origin "$commit`:refs/heads/assets-module"
-    
-    if ($commit -ne $commits[-1]) {
-        Write-Host "Push successful. Sleeping for 60 minutes..."
-        Start-Sleep -Seconds 3600
+    $targetTime = Get-Date $commit.Time
+    $now = Get-Date
+
+    if ($now -lt $targetTime) {
+        $sleepSeconds = [math]::Round(($targetTime - $now).TotalSeconds)
+        Write-Host "[$($now.ToString('HH:mm:ss'))] Waiting for $($commit.Time) to push $($commit.Name)... (Sleeping for $sleepSeconds seconds)"
+        Start-Sleep -Seconds $sleepSeconds
     }
+
+    $pushTime = Get-Date -Format "HH:mm:ss"
+    Write-Host "[$pushTime] Pushing $($commit.Name) (commit $($commit.Hash)) to GitHub..."
+    
+    # Push to feature/identity-allocation branch
+    git push origin "$($commit.Hash):refs/heads/feature/identity-allocation"
+    
+    Write-Host "Push successful!`n"
 }
 
-Write-Host "All files successfully pushed! You are done."
+Write-Host "All remaining features successfully pushed! You are done for the day. 🎉"

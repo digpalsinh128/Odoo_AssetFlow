@@ -28,10 +28,10 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col min-h-screen text-slate-100">
+    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col min-h-screen text-gray-800">
       {/* Brand logo */}
-      <div className="p-6 border-b border-slate-800 flex items-center gap-3">
-        <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+      <div className="p-6 border-b border-gray-200 flex items-center gap-3">
+        <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
           AssetFlow
         </span>
       </div>
@@ -46,8 +46,8 @@ export default function Sidebar() {
               href={item.href}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                 isActive
-                  ? "bg-purple-600/20 text-purple-300 border border-purple-500/30"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-transparent"
+                  ? "bg-blue-50 text-blue-700 border border-blue-200"
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-50 border border-transparent"
               }`}
             >
               <span className="text-lg">{item.icon}</span>
@@ -58,19 +58,19 @@ export default function Sidebar() {
       </nav>
 
       {/* Logged in User Profile Info & Logout */}
-      <div className="p-4 border-t border-slate-800 bg-slate-950/40">
+      <div className="p-4 border-t border-gray-200 bg-gray-50">
         {user && (
           <div className="mb-4">
-            <div className="text-sm font-semibold text-slate-200 truncate">{user.name}</div>
-            <div className="text-xs text-slate-500 truncate mb-2">{user.email}</div>
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-900/60 text-purple-300 border border-purple-500/30">
+            <div className="text-sm font-semibold text-gray-900 truncate">{user.name}</div>
+            <div className="text-xs text-gray-500 truncate mb-2">{user.email}</div>
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">
               {role.replace("_", " ")}
             </span>
           </div>
         )}
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-slate-800 rounded-lg text-xs font-semibold text-red-400 hover:bg-red-950/20 hover:border-red-900/50 transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-xs font-semibold text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors"
         >
           <span>🚪</span> Logout
         </button>

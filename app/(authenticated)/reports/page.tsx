@@ -32,17 +32,17 @@ export default function ReportsDashboard() {
       <div className="grid md:grid-cols-2 gap-8">
         
         {/* Maintenance Analytics */}
-        <div className="bg-slate-900/60 border border-slate-800 border-slate-800 p-6 rounded shadow-lg shadow-black/20 ">
-          <h2 className="text-xl font-bold mb-6 text-slate-200 border-b pb-2">Maintenance Frequency</h2>
+        <div className="bg-white p-6 rounded shadow">
+          <h2 className="text-xl font-bold mb-6 text-gray-800 border-b pb-2">Maintenance Frequency</h2>
           
           <div className="space-y-6">
             {maintenanceData.map((data, i) => (
               <div key={i}>
                 <div className="flex justify-between text-sm mb-1">
                   <span className="font-semibold">{data.categoryName}</span>
-                  <span className="text-slate-300">{data.totalRequests} Requests (Avg Resolve: {data.avgResolutionTimeHours} hrs)</span>
+                  <span className="text-gray-600">{data.totalRequests} Requests (Avg Resolve: {data.avgResolutionTimeHours} hrs)</span>
                 </div>
-                <div className="w-full bg-slate-800 rounded h-4 overflow-hidden">
+                <div className="w-full bg-gray-200 rounded h-4 overflow-hidden">
                   <div 
                     className="bg-red-500 h-full" 
                     style={{ width: `${(data.totalRequests / maxMaintRequests) * 100}%` }}
@@ -50,30 +50,30 @@ export default function ReportsDashboard() {
                 </div>
               </div>
             ))}
-            {maintenanceData.length === 0 && <p className="text-slate-400">No maintenance data available.</p>}
+            {maintenanceData.length === 0 && <p className="text-gray-500">No maintenance data available.</p>}
           </div>
         </div>
 
         {/* Utilization Analytics */}
-        <div className="bg-slate-900/60 border border-slate-800 border-slate-800 p-6 rounded shadow-lg shadow-black/20 ">
-          <h2 className="text-xl font-bold mb-6 text-slate-200 border-b pb-2">Asset Utilization (Bookings)</h2>
+        <div className="bg-white p-6 rounded shadow">
+          <h2 className="text-xl font-bold mb-6 text-gray-800 border-b pb-2">Asset Utilization (Bookings)</h2>
           
           <div className="space-y-6">
             {utilizationData.map((data, i) => (
               <div key={i}>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="font-semibold">{data.assetName} <span className="font-mono text-slate-400 text-xs">({data.serialNumber})</span></span>
-                  <span className="text-slate-300">{data.totalHoursBooked} hrs ({data.totalBookings} bookings)</span>
+                  <span className="font-semibold">{data.assetName} <span className="font-mono text-gray-500 text-xs">({data.serialNumber})</span></span>
+                  <span className="text-gray-600">{data.totalHoursBooked} hrs ({data.totalBookings} bookings)</span>
                 </div>
-                <div className="w-full bg-slate-800 rounded h-4 overflow-hidden">
+                <div className="w-full bg-gray-200 rounded h-4 overflow-hidden">
                   <div 
-                    className="bg-purple-600 h-full" 
+                    className="bg-blue-600 h-full" 
                     style={{ width: `${(data.totalHoursBooked / maxUtilHours) * 100}%` }}
                   ></div>
                 </div>
               </div>
             ))}
-            {utilizationData.length === 0 && <p className="text-slate-400">No utilization data available.</p>}
+            {utilizationData.length === 0 && <p className="text-gray-500">No utilization data available.</p>}
           </div>
         </div>
 
@@ -81,5 +81,4 @@ export default function ReportsDashboard() {
     </div>
   );
 }
-
 

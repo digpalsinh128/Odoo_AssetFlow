@@ -284,37 +284,37 @@ export default function OrgSetupClient() {
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Title */}
-      <div className="flex justify-between items-center border-b border-slate-800 pb-4">
+      <div className="flex justify-between items-center border-b border-gray-200 pb-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 to-blue-400 bg-clip-text text-transparent">
             Organization Setup
           </h1>
-          <p className="text-slate-400 text-sm mt-1">Manage corporate departments, asset categories, and user directory</p>
+          <p className="text-gray-500 text-sm mt-1">Manage corporate departments, asset categories, and user directory</p>
         </div>
       </div>
 
       {/* Alert Banners */}
       {error && (
-        <div className="p-4 bg-red-950/50 border border-red-800 text-red-300 rounded-lg text-sm flex justify-between items-center">
+        <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm flex justify-between items-center">
           <span>{error}</span>
-          <button onClick={() => setError("")} className="text-red-400 hover:text-red-300">✕</button>
+          <button onClick={() => setError("")} className="text-red-600 hover:text-red-700">✕</button>
         </div>
       )}
       {success && (
         <div className="p-4 bg-emerald-950/50 border border-emerald-800 text-emerald-300 rounded-lg text-sm flex justify-between items-center animate-fade-in">
           <span>{success}</span>
-          <button onClick={() => setSuccess("")} className="text-emerald-400 hover:text-emerald-300">✕</button>
+          <button onClick={() => setSuccess("")} className="text-emerald-700 hover:text-emerald-300">✕</button>
         </div>
       )}
 
       {/* Tabs list */}
-      <div className="flex border-b border-slate-800">
+      <div className="flex border-b border-gray-200">
         <button
           onClick={() => { setActiveTab("departments"); setError(""); }}
           className={`px-6 py-3 font-semibold text-sm transition-all duration-200 border-b-2 ${
             activeTab === "departments"
-              ? "border-purple-500 text-purple-300"
-              : "border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-800"
+              ? "border-blue-500 text-blue-300"
+              : "border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-200"
           }`}
         >
           🏬 Departments
@@ -323,8 +323,8 @@ export default function OrgSetupClient() {
           onClick={() => { setActiveTab("categories"); setError(""); }}
           className={`px-6 py-3 font-semibold text-sm transition-all duration-200 border-b-2 ${
             activeTab === "categories"
-              ? "border-purple-500 text-purple-300"
-              : "border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-800"
+              ? "border-blue-500 text-blue-300"
+              : "border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-200"
           }`}
         >
           🏷️ Asset Categories
@@ -333,27 +333,27 @@ export default function OrgSetupClient() {
           onClick={() => { setActiveTab("employees"); setError(""); }}
           className={`px-6 py-3 font-semibold text-sm transition-all duration-200 border-b-2 ${
             activeTab === "employees"
-              ? "border-purple-500 text-purple-300"
-              : "border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-800"
+              ? "border-blue-500 text-blue-300"
+              : "border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-200"
           }`}
         >
           👥 Employee Directory
         </button>
       </div>
 
-      {loading && <div className="text-center py-10 text-slate-400 animate-pulse">Loading data from servers...</div>}
+      {loading && <div className="text-center py-10 text-gray-500 animate-pulse">Loading data from servers...</div>}
 
       {/* Tab A: Departments */}
       {!loading && activeTab === "departments" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Department Form Panel */}
-          <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-xl space-y-4">
-            <h2 className="text-xl font-bold text-slate-200">
+          <div className="bg-white shadow-sm border border-gray-200 p-6 rounded-xl space-y-4">
+            <h2 className="text-xl font-bold text-gray-900">
               {editingDeptId ? "✏️ Edit Department" : "➕ Create Department"}
             </h2>
             <form onSubmit={handleDeptSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                   Department Name
                 </label>
                 <input
@@ -361,19 +361,19 @@ export default function OrgSetupClient() {
                   value={deptForm.name}
                   onChange={(e) => setDeptForm({ ...deptForm, name: e.target.value })}
                   required
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                   placeholder="e.g. Sales"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                   Parent Department (Optional)
                 </label>
                 <select
                   value={deptForm.parentId}
                   onChange={(e) => setDeptForm({ ...deptForm, parentId: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 >
                   <option value="">None (Top-Level)</option>
                   {departments
@@ -387,13 +387,13 @@ export default function OrgSetupClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                   Department Head / Manager
                 </label>
                 <select
                   value={deptForm.managerId}
                   onChange={(e) => setDeptForm({ ...deptForm, managerId: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 >
                   <option value="">No Manager Assigned</option>
                   {users.map((u) => (
@@ -405,13 +405,13 @@ export default function OrgSetupClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                   Status
                 </label>
                 <select
                   value={deptForm.status}
                   onChange={(e) => setDeptForm({ ...deptForm, status: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 >
                   <option value="ACTIVE">Active</option>
                   <option value="INACTIVE">Inactive</option>
@@ -421,7 +421,7 @@ export default function OrgSetupClient() {
               <div className="flex gap-2 pt-2">
                 <button
                   type="submit"
-                  className="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-lg py-2 transition-colors text-sm"
+                  className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg py-2 transition-colors text-sm"
                 >
                   {editingDeptId ? "Save Changes" : "Create"}
                 </button>
@@ -432,7 +432,7 @@ export default function OrgSetupClient() {
                       setEditingDeptId(null);
                       setDeptForm({ name: "", parentId: "", managerId: "", status: "ACTIVE" });
                     }}
-                    className="px-4 py-2 border border-slate-800 rounded-lg text-slate-400 hover:bg-slate-800 text-sm"
+                    className="px-4 py-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-100 text-sm"
                   >
                     Cancel
                   </button>
@@ -442,13 +442,13 @@ export default function OrgSetupClient() {
           </div>
 
           {/* Department List Panel */}
-          <div className="lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-xl overflow-hidden">
-            <div className="p-6 border-b border-slate-800">
-              <h2 className="text-xl font-bold text-slate-200">Corporate Hierarchy</h2>
+          <div className="lg:col-span-2 bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900">Corporate Hierarchy</h2>
             </div>
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-950/40 text-slate-400 text-xs font-semibold uppercase border-b border-slate-800">
+                <tr className="bg-gray-50 text-gray-500 text-xs font-semibold uppercase border-b border-gray-200">
                   <th className="p-4">Name</th>
                   <th className="p-4">Manager</th>
                   <th className="p-4">Parent Dept</th>
@@ -456,33 +456,33 @@ export default function OrgSetupClient() {
                   <th className="p-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800 text-sm">
+              <tbody className="divide-y divide-gray-200 text-sm">
                 {departments.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="p-6 text-center text-slate-500">
+                    <td colSpan={5} className="p-6 text-center text-gray-500">
                       No departments configured.
                     </td>
                   </tr>
                 ) : (
                   departments.map((dept) => (
-                    <tr key={dept.id} className="hover:bg-slate-800/20 transition-colors">
-                      <td className="p-4 font-semibold text-slate-200">{dept.name}</td>
-                      <td className="p-4 text-slate-300">
+                    <tr key={dept.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="p-4 font-semibold text-gray-900">{dept.name}</td>
+                      <td className="p-4 text-gray-700">
                         {dept.manager ? (
                           <span>👤 {dept.manager.name}</span>
                         ) : (
-                          <span className="text-slate-500 italic">None</span>
+                          <span className="text-gray-500 italic">None</span>
                         )}
                       </td>
-                      <td className="p-4 text-slate-400">
-                        {dept.parent ? dept.parent.name : <span className="text-slate-600">-</span>}
+                      <td className="p-4 text-gray-500">
+                        {dept.parent ? dept.parent.name : <span className="text-gray-400">-</span>}
                       </td>
                       <td className="p-4">
                         <span
                           className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${
                             dept.status === "ACTIVE"
-                              ? "bg-emerald-950/40 text-emerald-400 border border-emerald-800/40"
-                              : "bg-red-950/40 text-red-400 border border-red-800/40"
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                              : "bg-red-950/40 text-red-600 border border-red-200/40"
                           }`}
                         >
                           {dept.status}
@@ -491,13 +491,13 @@ export default function OrgSetupClient() {
                       <td className="p-4 text-right space-x-2">
                         <button
                           onClick={() => handleEditDept(dept)}
-                          className="text-xs text-purple-400 hover:text-purple-300 font-medium"
+                          className="text-xs text-blue-400 hover:text-blue-300 font-medium"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleToggleDeptStatus(dept)}
-                          className="text-xs text-slate-400 hover:text-slate-200 font-medium"
+                          className="text-xs text-gray-500 hover:text-gray-900 font-medium"
                         >
                           {dept.status === "ACTIVE" ? "Deactivate" : "Activate"}
                         </button>
@@ -515,13 +515,13 @@ export default function OrgSetupClient() {
       {!loading && activeTab === "categories" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Category Form Panel */}
-          <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-xl space-y-4">
-            <h2 className="text-xl font-bold text-slate-200">
+          <div className="bg-white shadow-sm border border-gray-200 p-6 rounded-xl space-y-4">
+            <h2 className="text-xl font-bold text-gray-900">
               {editingCatId ? "🏷️ Edit Category" : "➕ Create Category"}
             </h2>
             <form onSubmit={handleCatSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                   Category Name
                 </label>
                 <input
@@ -529,7 +529,7 @@ export default function OrgSetupClient() {
                   value={catName}
                   onChange={(e) => setCatName(e.target.value)}
                   required
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                   placeholder="e.g. Laptops"
                 />
               </div>
@@ -537,13 +537,13 @@ export default function OrgSetupClient() {
               {/* Dynamic Custom Fields Editor */}
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     Custom Attributes Schema
                   </label>
                   <button
                     type="button"
                     onClick={handleAddAttr}
-                    className="text-xs text-purple-400 hover:text-purple-300 font-semibold"
+                    className="text-xs text-blue-400 hover:text-blue-300 font-semibold"
                   >
                     + Add Field
                   </button>
@@ -551,11 +551,11 @@ export default function OrgSetupClient() {
 
                 <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
                   {catFields.map((field, idx) => (
-                    <div key={idx} className="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2 relative group">
+                    <div key={idx} className="bg-gray-50 p-3 rounded-lg border border-gray-200 space-y-2 relative group">
                       <button
                         type="button"
                         onClick={() => handleRemoveAttr(idx)}
-                        className="absolute top-2 right-2 text-xs text-red-500 hover:text-red-400"
+                        className="absolute top-2 right-2 text-xs text-red-500 hover:text-red-600"
                       >
                         ✕
                       </button>
@@ -566,26 +566,26 @@ export default function OrgSetupClient() {
                           onChange={(e) => handleAttrChange(idx, "name", e.target.value)}
                           placeholder="Attribute Name (e.g. RAM)"
                           required
-                          className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-slate-200"
+                          className="w-full bg-white shadow-sm border border-gray-200 rounded px-2 py-1 text-xs text-gray-900"
                         />
                       </div>
                       <div className="flex gap-2 items-center">
                         <select
                           value={field.type}
                           onChange={(e) => handleAttrChange(idx, "type", e.target.value)}
-                          className="flex-1 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-slate-200"
+                          className="flex-1 bg-white shadow-sm border border-gray-200 rounded px-2 py-1 text-xs text-gray-900"
                         >
                           <option value="text">Text</option>
                           <option value="number">Number</option>
                           <option value="date">Date</option>
                           <option value="boolean">Yes / No</option>
                         </select>
-                        <label className="flex items-center gap-1 text-xs text-slate-400">
+                        <label className="flex items-center gap-1 text-xs text-gray-500">
                           <input
                             type="checkbox"
                             checked={field.required}
                             onChange={(e) => handleAttrChange(idx, "required", e.target.checked)}
-                            className="rounded border-slate-800 text-purple-600 focus:ring-0 focus:ring-offset-0 bg-slate-900"
+                            className="rounded border-gray-200 text-blue-600 focus:ring-0 focus:ring-offset-0 bg-white shadow-sm"
                           />
                           Required
                         </label>
@@ -593,7 +593,7 @@ export default function OrgSetupClient() {
                     </div>
                   ))}
                   {catFields.length === 0 && (
-                    <div className="text-center p-3 text-slate-600 text-xs italic border border-dashed border-slate-800 rounded-lg">
+                    <div className="text-center p-3 text-gray-400 text-xs italic border border-dashed border-gray-200 rounded-lg">
                       No custom fields added yet. Default fields (Serial, Model, Name) are included automatically.
                     </div>
                   )}
@@ -603,7 +603,7 @@ export default function OrgSetupClient() {
               <div className="flex gap-2 pt-2">
                 <button
                   type="submit"
-                  className="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-lg py-2 transition-colors text-sm"
+                  className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg py-2 transition-colors text-sm"
                 >
                   {editingCatId ? "Save Changes" : "Create"}
                 </button>
@@ -615,7 +615,7 @@ export default function OrgSetupClient() {
                       setCatName("");
                       setCatFields([]);
                     }}
-                    className="px-4 py-2 border border-slate-800 rounded-lg text-slate-400 hover:bg-slate-800 text-sm"
+                    className="px-4 py-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-100 text-sm"
                   >
                     Cancel
                   </button>
@@ -625,22 +625,22 @@ export default function OrgSetupClient() {
           </div>
 
           {/* Category List Panel */}
-          <div className="lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-xl overflow-hidden animate-fade-in">
-            <div className="p-6 border-b border-slate-800">
-              <h2 className="text-xl font-bold text-slate-200">Asset Categories</h2>
+          <div className="lg:col-span-2 bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden animate-fade-in">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900">Asset Categories</h2>
             </div>
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-950/40 text-slate-400 text-xs font-semibold uppercase border-b border-slate-800">
+                <tr className="bg-gray-50 text-gray-500 text-xs font-semibold uppercase border-b border-gray-200">
                   <th className="p-4">Category Name</th>
                   <th className="p-4">Custom Fields Schema</th>
                   <th className="p-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800 text-sm">
+              <tbody className="divide-y divide-gray-200 text-sm">
                 {categories.length === 0 ? (
                   <tr>
-                    <td colSpan={3} className="p-6 text-center text-slate-500">
+                    <td colSpan={3} className="p-6 text-center text-gray-500">
                       No asset categories defined.
                     </td>
                   </tr>
@@ -652,20 +652,20 @@ export default function OrgSetupClient() {
                     } catch (e) {}
 
                     return (
-                      <tr key={cat.id} className="hover:bg-slate-800/20 transition-colors">
-                        <td className="p-4 font-semibold text-slate-200 vertical-align-top">{cat.name}</td>
-                        <td className="p-4 text-slate-400 max-w-sm">
+                      <tr key={cat.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="p-4 font-semibold text-gray-900 vertical-align-top">{cat.name}</td>
+                        <td className="p-4 text-gray-500 max-w-sm">
                           {fieldsArr.length === 0 ? (
-                            <span className="text-slate-600 italic">None (only base attributes)</span>
+                            <span className="text-gray-400 italic">None (only base attributes)</span>
                           ) : (
                             <div className="flex flex-wrap gap-1.5">
                               {fieldsArr.map((f, i) => (
                                 <span
                                   key={i}
-                                  className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-300 border border-slate-700/50"
+                                  className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-700 border border-slate-700/50"
                                 >
                                   {f.name} ({f.type})
-                                  {f.required && <span className="text-red-400 ml-1 font-bold">*</span>}
+                                  {f.required && <span className="text-red-600 ml-1 font-bold">*</span>}
                                 </span>
                               ))}
                             </div>
@@ -674,7 +674,7 @@ export default function OrgSetupClient() {
                         <td className="p-4 text-right space-x-2">
                           <button
                             onClick={() => handleEditCat(cat)}
-                            className="text-xs text-purple-400 hover:text-purple-300 font-medium"
+                            className="text-xs text-blue-400 hover:text-blue-300 font-medium"
                           >
                             Edit
                           </button>
@@ -691,13 +691,13 @@ export default function OrgSetupClient() {
 
       {/* Tab C: Employee Directory */}
       {!loading && activeTab === "employees" && (
-        <div className="bg-slate-900/60 border border-slate-800 rounded-xl overflow-hidden animate-fade-in">
-          <div className="p-6 border-b border-slate-800">
-            <h2 className="text-xl font-bold text-slate-200">Directory & Permissions Management</h2>
+        <div className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden animate-fade-in">
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-xl font-bold text-gray-900">Directory & Permissions Management</h2>
           </div>
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-950/40 text-slate-400 text-xs font-semibold uppercase border-b border-slate-800">
+              <tr className="bg-gray-50 text-gray-500 text-xs font-semibold uppercase border-b border-gray-200">
                 <th className="p-4">Name</th>
                 <th className="p-4">Email</th>
                 <th className="p-4">Department</th>
@@ -706,10 +706,10 @@ export default function OrgSetupClient() {
                 <th className="p-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800 text-sm">
+            <tbody className="divide-y divide-gray-200 text-sm">
               {employees.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-slate-500">
+                  <td colSpan={6} className="p-6 text-center text-gray-500">
                     No employees found in directory.
                   </td>
                 </tr>
@@ -717,15 +717,15 @@ export default function OrgSetupClient() {
                 employees.map((emp) => {
                   const isEditing = editingEmpId === emp.id;
                   return (
-                    <tr key={emp.id} className="hover:bg-slate-800/20 transition-colors">
-                      <td className="p-4 font-semibold text-slate-200">{emp.name}</td>
-                      <td className="p-4 text-slate-400">{emp.email}</td>
-                      <td className="p-4 text-slate-300">
+                    <tr key={emp.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="p-4 font-semibold text-gray-900">{emp.name}</td>
+                      <td className="p-4 text-gray-500">{emp.email}</td>
+                      <td className="p-4 text-gray-700">
                         {isEditing ? (
                           <select
                             value={empForm.departmentId}
                             onChange={(e) => setEmpForm({ ...empForm, departmentId: e.target.value })}
-                            className="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs text-slate-200"
+                            className="bg-gray-50 border border-gray-200 rounded px-2 py-1 text-xs text-gray-900"
                           >
                             <option value="">No Department</option>
                             {deptOptions.map((d) => (
@@ -737,7 +737,7 @@ export default function OrgSetupClient() {
                         ) : emp.department ? (
                           <span>🏢 {emp.department.name}</span>
                         ) : (
-                          <span className="text-slate-600 italic">Unassigned</span>
+                          <span className="text-gray-400 italic">Unassigned</span>
                         )}
                       </td>
                       <td className="p-4">
@@ -745,7 +745,7 @@ export default function OrgSetupClient() {
                           <select
                             value={empForm.role}
                             onChange={(e) => setEmpForm({ ...empForm, role: e.target.value })}
-                            className="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs text-slate-200"
+                            className="bg-gray-50 border border-gray-200 rounded px-2 py-1 text-xs text-gray-900"
                           >
                             <option value="EMPLOYEE">Employee</option>
                             <option value="DEPARTMENT_HEAD">Department Head</option>
@@ -753,7 +753,7 @@ export default function OrgSetupClient() {
                             <option value="ADMIN">Admin</option>
                           </select>
                         ) : (
-                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-purple-950/40 text-purple-300 border border-purple-800/40 font-medium">
+                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-blue-950/40 text-blue-300 border border-blue-800/40 font-medium">
                             {emp.role.replace("_", " ")}
                           </span>
                         )}
@@ -763,7 +763,7 @@ export default function OrgSetupClient() {
                           <select
                             value={empForm.status}
                             onChange={(e) => setEmpForm({ ...empForm, status: e.target.value })}
-                            className="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs text-slate-200"
+                            className="bg-gray-50 border border-gray-200 rounded px-2 py-1 text-xs text-gray-900"
                           >
                             <option value="ACTIVE">Active</option>
                             <option value="INACTIVE">Inactive</option>
@@ -772,8 +772,8 @@ export default function OrgSetupClient() {
                           <span
                             className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${
                               emp.status === "ACTIVE"
-                                ? "bg-emerald-950/40 text-emerald-400 border border-emerald-800/40"
-                                : "bg-red-950/40 text-red-400 border border-red-800/40"
+                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                : "bg-red-950/40 text-red-600 border border-red-200/40"
                             }`}
                           >
                             {emp.status}
@@ -785,13 +785,13 @@ export default function OrgSetupClient() {
                           <>
                             <button
                               onClick={() => handleSaveEmp(emp.id)}
-                              className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold"
+                              className="text-xs text-emerald-700 hover:text-emerald-300 font-semibold"
                             >
                               Save
                             </button>
                             <button
                               onClick={() => setEditingEmpId(null)}
-                              className="text-xs text-slate-400 hover:text-slate-200"
+                              className="text-xs text-gray-500 hover:text-gray-900"
                             >
                               Cancel
                             </button>
@@ -799,7 +799,7 @@ export default function OrgSetupClient() {
                         ) : (
                           <button
                             onClick={() => handleEditEmp(emp)}
-                            className="text-xs text-purple-400 hover:text-purple-300 font-medium"
+                            className="text-xs text-blue-400 hover:text-blue-300 font-medium"
                           >
                             Edit
                           </button>
@@ -816,3 +816,4 @@ export default function OrgSetupClient() {
     </div>
   );
 }
+

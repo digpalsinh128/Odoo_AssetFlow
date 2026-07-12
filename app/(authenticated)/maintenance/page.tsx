@@ -55,13 +55,13 @@ export default function MaintenanceDashboard() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'PENDING': return 'bg-amber-950/40 text-amber-400';
-      case 'APPROVED': return 'bg-purple-900/40 text-purple-300';
-      case 'REJECTED': return 'bg-red-950/40 text-red-400';
+      case 'PENDING': return 'bg-yellow-100 text-yellow-800';
+      case 'APPROVED': return 'bg-blue-100 text-blue-800';
+      case 'REJECTED': return 'bg-red-100 text-red-800';
       case 'TECHNICIAN_ASSIGNED': return 'bg-purple-100 text-purple-800';
-      case 'IN_PROGRESS': return 'bg-orange-950/40 text-orange-400';
-      case 'RESOLVED': return 'bg-emerald-950/40 text-emerald-400';
-      default: return 'bg-gray-100 text-slate-200';
+      case 'IN_PROGRESS': return 'bg-orange-100 text-orange-800';
+      case 'RESOLVED': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -69,7 +69,7 @@ export default function MaintenanceDashboard() {
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Maintenance Management</h1>
-        <Link href="/maintenance/new" className="bg-purple-600 text-white px-4 py-2 rounded shadow-lg shadow-black/20  hover:bg-purple-500">
+        <Link href="/maintenance/new" className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700">
           + Raise Request
         </Link>
       </div>
@@ -79,10 +79,10 @@ export default function MaintenanceDashboard() {
       ) : (
         <div className="grid gap-4">
           {requests.length === 0 && (
-            <p className="text-slate-400 bg-slate-900/60 border border-slate-800 border-slate-800 p-6 rounded shadow-lg shadow-black/20  text-center">No maintenance requests found.</p>
+            <p className="text-gray-500 bg-white p-6 rounded shadow text-center">No maintenance requests found.</p>
           )}
           {requests.map(req => (
-            <div key={req.id} className="bg-slate-900/60 border border-slate-800 border-slate-800 p-6 rounded shadow-lg shadow-black/20  flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div key={req.id} className="bg-white p-6 rounded shadow flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <h3 className="text-xl font-semibold">{req.asset?.name || 'Unknown Asset'}</h3>
@@ -90,10 +90,10 @@ export default function MaintenanceDashboard() {
                   <span className={`text-xs px-2 py-1 rounded font-bold ${getStatusColor(req.status)}`}>
                     {req.status}
                   </span>
-                  <span className="text-xs border border-slate-800 px-2 py-1 rounded">Priority: {req.priority}</span>
+                  <span className="text-xs border px-2 py-1 rounded">Priority: {req.priority}</span>
                 </div>
-                <p className="text-slate-300 mb-2">{req.issue}</p>
-                <div className="text-sm text-slate-400 flex gap-4">
+                <p className="text-gray-700 mb-2">{req.issue}</p>
+                <div className="text-sm text-gray-500 flex gap-4">
                   <span>Raised by: {req.raisedBy?.name || 'Unknown'}</span>
                   <span>Date: {new Date(req.createdAt).toLocaleDateString()}</span>
                   {req.technicianName && <span>Technician: <strong>{req.technicianName}</strong></span>}
@@ -103,8 +103,8 @@ export default function MaintenanceDashboard() {
               <div className="flex flex-wrap gap-2 md:flex-col md:items-end">
                 {req.status === 'PENDING' && (
                   <>
-                    <button onClick={() => handleAction(req.id, 'APPROVED')} className="bg-purple-600 text-white px-4 py-1.5 rounded text-sm hover:bg-purple-500">Approve</button>
-                    <button onClick={() => handleAction(req.id, 'REJECTED')} className="bg-red-950/40 text-red-400 px-4 py-1.5 rounded text-sm hover:bg-red-200">Reject</button>
+                    <button onClick={() => handleAction(req.id, 'APPROVED')} className="bg-blue-600 text-white px-4 py-1.5 rounded text-sm hover:bg-blue-700">Approve</button>
+                    <button onClick={() => handleAction(req.id, 'REJECTED')} className="bg-red-100 text-red-700 px-4 py-1.5 rounded text-sm hover:bg-red-200">Reject</button>
                   </>
                 )}
                 {req.status === 'APPROVED' && (
@@ -124,5 +124,4 @@ export default function MaintenanceDashboard() {
     </div>
   );
 }
-
 
