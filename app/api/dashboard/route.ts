@@ -142,7 +142,7 @@ export async function GET() {
         take: 15,
         orderBy: { createdAt: "desc" },
         include: {
-          user: { select: { id: true, name: true } },
+          user: { select: { id: true, name: true, role: true } },
         },
       });
 

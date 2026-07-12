@@ -260,7 +260,7 @@ export default function DashboardClient() {
                       <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
                         {log.user && (
                           <span className="bg-slate-800 px-1.5 py-0.5 rounded text-slate-400">
-                            👤 {log.user.name} ({log.user.role.replace("_", " ")})
+                            👤 {log.user.name} ({log.user.role?.replace("_", " ") || ""})
                           </span>
                         )}
                         <span>•</span>
