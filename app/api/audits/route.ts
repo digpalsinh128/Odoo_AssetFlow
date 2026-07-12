@@ -29,7 +29,14 @@ export async function POST(request: Request) {
 
     // Determine scope filter for Assets
     const assetFilter: any = {};
-    if (scopeDept) assetFilter.departmentId = scopeDept;
+    if (scopeDept) {
+      assetFilter.allocations = {
+        some: {
+          departmentId: scopeDept,
+          status: 'ACTIVE'
+        }
+      };
+    }
     if (scopeLocation) assetFilter.location = { contains: scopeLocation };
 
     // Find all assets in scope
