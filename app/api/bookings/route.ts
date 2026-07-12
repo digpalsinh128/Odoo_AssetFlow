@@ -1,81 +1,125 @@
-export const dynamic = "force-dynamic";
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getSession } from "@/lib/session";
+// Helper to determine status dynamically based on current time
+const getDynamicStatus = (booking: any) => {
+  if (booking.status === 'CANCELLED') return 'CANCELLED';
+  
+  const now = new Date();
+  const start = new Date(booking.startTime);
+  const end = new Date(booking.endTime);
+  
+  if (now < start) return 'UPCOMING';
+  if (now >= start && now <= end) return 'ONGOING';
+  return 'COMPLETED';
+};
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const { searchParams } = new URL(request.url);
+    const assetId = searchParams.get('assetId');
 
     const bookings = await prisma.booking.findMany({
-      include: {
-        asset: {
-          include: {
-            category: true,
-          },
-        },
+      where: {
+        ...(assetId && { assetId }),
       },
-      orderBy: { createdAt: "desc" },
+      include: {
+        asset: true,
+        bookedBy: true,
+      },
+      orderBy: { startTime: 'asc' },
     });
 
-    return NextResponse.json(bookings);
-  } catch (error: any) {
-    console.error("GET bookings error:", error);
-    return NextResponse.json({ error: "Failed to fetch bookings" }, { status: 500 });
+    // Dynamically update status for presentation
+    const dynamicBookings = bookings.map(b => ({
+      ...b,
+      status: getDynamicStatus(b)
+    }));
+
+    return NextResponse.json(dynamicBookings);
+  } catch (error) {
+    console.error('Error fetching bookings:', error);
+    return NextResponse.json({ error: 'Failed to fetch bookings' }, { status: 500 });
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const data = await request.json();
+    const { assetId, bookedById, startTime, endTime } = data;
+
+    if (!assetId || !bookedById || !startTime || !endTime) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const body = await req.json();
-    const { assetId } = body;
+    const start = new Date(startTime);
+    const end = new Date(endTime);
 
-    if (!assetId) {
-      return NextResponse.json({ error: "Asset ID is required" }, { status: 400 });
+    if (start >= end) {
+      return NextResponse.json({ error: 'End time must be after start time' }, { status: 400 });
     }
 
-    const asset = await prisma.asset.findUnique({
-      where: { id: assetId },
+    // Verify asset is bookable and available
+    const asset = await prisma.asset.findUnique({ where: { id: assetId } });
+    if (!asset || !asset.isBookable) {
+      return NextResponse.json({ error: 'Asset is not bookable' }, { status: 400 });
+    }
+    if (asset.status === 'UNDER_MAINTENANCE') {
+      return NextResponse.json({ error: 'Asset is currently under maintenance and cannot be booked' }, { status: 400 });
+    }
+
+    // OVERLAP RULE: newStart < existingEnd AND newEnd > existingStart
+    // Boundary is inclusive of "touching but not overlapping" (so < and > strictly, not <= or >=)
+    const overlappingBooking = await prisma.booking.findFirst({
+      where: {
+        assetId,
+        status: { not: 'CANCELLED' },
+        startTime: { lt: end },
+        endTime: { gt: start },
+      }
     });
 
-    if (!asset) {
-      return NextResponse.json({ error: "Asset not found" }, { status: 404 });
+    if (overlappingBooking) {
+      return NextResponse.json({ 
+        error: 'Booking overlaps with an existing booking', 
+        overlappingBooking 
+      }, { status: 400 });
     }
 
-    if (asset.status !== "AVAILABLE") {
-      return NextResponse.json({ error: `Asset is currently ${asset.status.toLowerCase()} and cannot be booked` }, { status: 400 });
-    }
-
-    const booking = await prisma.booking.create({
+    const newBooking = await prisma.booking.create({
       data: {
         assetId,
+        bookedById,
+        startTime: start,
+        endTime: end,
+        status: 'UPCOMING',
       },
+      include: {
+        asset: true,
+        bookedBy: true,
+      }
     });
 
-    const userName = (session.user as any)?.name || "Unknown User";
-    const userId = (session.user as any)?.id || null;
-
-    // Log activity
     await prisma.activityLog.create({
       data: {
-        action: "BOOK_ASSET",
-        details: `Asset "${asset.name}" (S/N: ${asset.serialNumber}) booked by ${userName}`,
-        userId,
-      },
+        action: 'BOOKING_CREATED',
+        entity: `Asset:${asset.serialNumber}`,
+        userId: bookedById,
+        details: JSON.stringify({ 
+          asset: asset.name,
+          start: start.toISOString(),
+          end: end.toISOString()
+        })
+      }
     });
 
-    return NextResponse.json(booking, { status: 201 });
-  } catch (error: any) {
-    console.error("POST bookings error:", error);
-    return NextResponse.json({ error: "Failed to create booking" }, { status: 500 });
+    newBooking.status = getDynamicStatus(newBooking);
+
+    return NextResponse.json(newBooking, { status: 201 });
+  } catch (error) {
+    console.error('Error creating booking:', error);
+    return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 });
   }
 }
+
+
